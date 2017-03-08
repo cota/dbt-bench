@@ -46,8 +46,10 @@ for (my $i = 0; $i < @vers; $i++) {
     $arr[$i] = "'$ver' $i";
 }
 
+print "set border linewidth 2.0\n";
 print "set title '$arch NBench ", $titles{$suite}, " Performance'\n";
 print "set xrange [-1:", scalar(@vers), "]\n";
 print "set xtics (", join(", ", @arr), ")\n";
-print "set ylabel 'NBench Score'\n";
-print "plot '$file' using 1:$cols{$suite} title '' with linespoints\n";
+print "set ylabel 'Score'\n";
+print "set xlabel 'QEMU version'\n";
+print "plot '$file' using 1:$cols{$suite} title '' with linespoints lw 1.5 pi -1 ps 1.2\n";
