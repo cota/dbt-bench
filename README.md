@@ -1,6 +1,6 @@
-# dbt-bench
+# DBT-bench
 
-dbt-bench is a simple benchmarking tool. For now, it runs the
+DBT-bench is a simple benchmarking tool. For now, it runs the
 [NBench](https://en.wikipedia.org/wiki/NBench) benchmark suite under a
 user-provided executable. This executable can be any program that takes another
 executable as an argument, e.g., `/usr/bin/time` or a binary translator such
