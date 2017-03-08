@@ -33,10 +33,15 @@ qemu.dat: qemu-dat.pl $(QEMU_FILES)
 	./$< $(QEMU_FILES) > $@.tmp
 	mv $@.tmp $@
 
+# This makes sure we generate one file at a time, regardless
+# of the -j parameter. However, we want to leverage multiple
+# cores to build each of the QEMU versions we're testing.
+# To make sure subsequent make invocations pick this up,
+# the recipe that calls the Perl script begins with '+'.
 .NOTPARALLEL: $(QEMU_FILES)
 
 $(QEMU_FILES):
-	./qemu.pl $@
+	+./qemu.pl $@
 
 clean:
 	$(RM) *.tmp
