@@ -17,7 +17,7 @@ qemu-%.txt: qemu-%.plt
 	mv $@.tmp $@
 
 qemu-%.svg: qemu-%.plt
-	gnuplot -e "set terminal svg size 1200,900 fname 'Times' fsize 20" $< > $@.tmp
+	gnuplot -e "set terminal svg size 800,600 enhanced fsize 14 butt" $< > $@.tmp
 	mv $@.tmp $@
 
 qemu-int.plt: qemu-plot.pl qemu.dat
