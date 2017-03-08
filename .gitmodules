@@ -1,0 +1,3 @@
+[submodule "nbench"]
+	path = nbench
+	url = https://github.com/cota/nbench

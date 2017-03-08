@@ -1,0 +1,7 @@
+*.nbench
+*.tmp
+*.dat
+*.plt
+*.txt
+*.png
+*.svg
