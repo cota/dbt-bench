@@ -7,12 +7,14 @@ my @vers = map { (my $s = $_) =~ s/\.nbench$//; $s } @ARGV;
 die if (!@vers);
 
 my $res;
+my $arch;
 
 foreach my $ver (@vers) {
     get_val($ver);
 }
 
-print "# ", join("\t", @vers), "\n";
+print "# versions: ", join("\t", @vers), "\n";
+print "# arch: $arch\n";
 for (my $i = 0; $i < @vers; $i++) {
     print join("\t", $i, $res->{$vers[$i]}->{int}, $res->{$vers[$i]}->{fp}), "\n";
 }
@@ -32,6 +34,15 @@ sub get_val {
 	}
 	if (!defined($r->{fp}) && $line =~ /FLOATING-POINT INDEX:\s+([.0-9]+)/) {
 	    $r->{fp} = $1;
+	}
+	if ($line =~ /dbt-bench: arch: (\w+)/) {
+	    my $a = $1;
+	    if (!defined($arch)) {
+		$arch = $a;
+	    }
+	    if ($a ne $arch) {
+		die "architecture '$a' in file '$file' does not match that in previous files ('$arch')\n";
+	    }
 	}
     }
     close $in or die "Could not close '$file': $!";

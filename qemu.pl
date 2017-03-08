@@ -34,6 +34,7 @@ sys("make clean && make");
 my $cmd = "$origdir/dbt-bench.pl $path/$arch-linux-user/qemu-$arch 1>$origdir/$outfile.tmp";
 print "$cmd\n";
 sys($cmd);
+sys("echo \"dbt-bench: arch: $arch\" >> $origdir/$outfile.tmp");
 sys("git checkout $origtag");
 chdir($origdir) or die "cannot chdir($origdir): $!";
 sys("mv $outfile.tmp $outfile");
