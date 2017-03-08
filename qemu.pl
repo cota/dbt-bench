@@ -7,25 +7,25 @@ use strict;
 use Cwd;
 
 if (!defined($ENV{'QEMU_PATH'})) {
-    die "Define QEMU_PATH environment variable\n";
+    die "Define QEMU_PATH environment variable. Stopped";
 }
 my $path = $ENV{'QEMU_PATH'};
 if (! -d $path) {
-    die "$path is not a directory\n";
+    die "$path is not a directory. Stopped";
 }
 
 if (!defined($ENV{'QEMU_ARCH'})) {
-    die "Define QEMU_ARCH environment variable, e.g. x86_64\n";
+    die "Define QEMU_ARCH environment variable, e.g. x86_64. Stopped";
 }
 my $arch = $ENV{'QEMU_ARCH'};
 
-my $outfile = $ARGV[0] or die "No output file given\n";
+my $outfile = $ARGV[0] or die "No output file given. Stopped";
 
 my $tag = $outfile;
 $tag =~ s/\.nbench$//;
 
 my $origdir = getcwd;
-chdir($path) or die "cannot chdir($path): $!\n";
+chdir($path) or die "cannot chdir($path): $!";
 my $origtag = `git rev-parse HEAD`;
 die "cannot invoke git at $path: $?" if ($?);
 

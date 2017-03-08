@@ -19,7 +19,7 @@ if (!$tool) {
 }
 
 if (! -X $tool) {
-    die "Cannot find tool at $tool\n";
+    die "Cannot find tool at $tool. Stopped";
 }
 
 run_nbench();
@@ -40,13 +40,13 @@ sub run_nbench {
     my $origdir = getcwd;
 
     if (! -X "$Bin/$nbench/nbench") {
-	die "Build $nbench with make -C $Bin/$nbench (Note: it is a git submodule)\n";
+	die "nbench executable not found. Build $nbench with make -C $Bin/$nbench (Note: it is a git submodule). Stopped";
     }
 
-    chdir("$Bin/$nbench") or die "cannot chdir($Bin/$nbench): $!\n";
+    chdir("$Bin/$nbench") or die "cannot chdir($Bin/$nbench): $!";
 
     my $cmd = "taskset -c 0 $tool ./nbench";
     sys($cmd);
-    chdir($origdir) or die "cannot chdir($origdir): $!\n";
+    chdir($origdir) or die "cannot chdir($origdir): $!";
 }
 

@@ -20,7 +20,7 @@ my %titles = (
     'fp' => 'Floating Point',
     );
 
-die "Invalid test $suite\n" if (!$cols{$suite});
+die "Invalid test $suite. Stopped" if (!$cols{$suite});
 
 my $file = $ARGV[0];
 

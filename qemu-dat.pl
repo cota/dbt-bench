@@ -41,7 +41,7 @@ sub get_val {
 		$arch = $a;
 	    }
 	    if ($a ne $arch) {
-		die "architecture '$a' in file '$file' does not match that in previous files ('$arch')\n";
+		die "architecture '$a' in file '$file' does not match that in previous files ('$arch'). Stopped";
 	    }
 	}
     }
