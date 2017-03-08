@@ -25,5 +25,11 @@ PNG plots with the integer and floating point NBench results can be
 generated with `make qemu`. (Other output formats are possible, see
 `Makefile`.)
 
-N.B. If your `QEMU_ARCH` is not that of the host machine, make sure to have
-cross-compiled NBench as described above.
+### Notes
+
+* If your `QEMU_ARCH` is not that of the host machine, make sure to have
+  cross-compiled NBench as described above.
+
+* The scripts do not reconfigure QEMU. They do call `make clean`, however.
+  Make sure the tree pointed at by `QEMU_PATH` is properly configured for the
+  architecture you want. Configuring with `--disable-werror` is recommended.
