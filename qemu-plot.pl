@@ -15,6 +15,11 @@ my %cols = (
     'fp' => 3,
     );
 
+my %titles = (
+    'int' => 'Integer',
+    'fp' => 'Floating Point',
+    );
+
 die "Invalid test $suite\n" if (!$cols{$suite});
 
 my $file = $ARGV[0];
@@ -36,6 +41,7 @@ for (my $i = 0; $i < @vers; $i++) {
     $arr[$i] = "'$ver' $i";
 }
 
+print "set title 'NBench ", $titles{$suite}, " Performance'\n";
 print "set xrange [-1:", scalar(@vers), "]\n";
 print "set xtics (", join(", ", @arr), ")\n";
 print "set ylabel 'NBench Score'\n";
