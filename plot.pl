@@ -28,6 +28,7 @@ my $file = $ARGV[0];
 
 my @vers;
 my $arch;
+my $host;
 open my $in, '<:encoding(UTF-8)', $file or die "Could not open '$file' for reading $!";
 while (<$in>) {
     if ($_ =~ /^# versions: (.*)/) {
@@ -35,6 +36,9 @@ while (<$in>) {
     }
     if ($_ =~ /^# arch: (\w+)/) {
 	$arch = $1;
+    }
+    if ($_ =~ /^# host: (.+)/) {
+	$host = $1;
     }
 }
 close $in or die "Could not close '$file': $!";
@@ -49,7 +53,11 @@ for (my $i = 0; $i < @vers; $i++) {
 }
 
 print "set border linewidth 2.0\n";
-print "set title '$arch NBench ", $titles{$suite}, " Performance' noenhanced\n";
+print "set title \"$arch NBench ", $titles{$suite}, " Performance";
+if ($host) {
+    print "\\nHost: $host";
+}
+print "\" noenhanced\n";
 print "set xrange [-1:", scalar(@vers), "]\n";
 print "set xtics (", join(", ", @arr), ")\n";
 print "set xtics rotate\n";

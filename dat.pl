@@ -20,6 +20,7 @@ die if (!@vers);
 
 my $res;
 my $arch;
+my $host;
 
 foreach my $ver (@vers) {
     get_val($ver);
@@ -27,6 +28,7 @@ foreach my $ver (@vers) {
 
 print "# versions: ", join("\t", @vers), "\n";
 print "# arch: $arch\n";
+print "# host: $host\n";
 for (my $i = 0; $i < @vers; $i++) {
     my $r = $res->{$vers[$i]};
     print join("\t", $i,
@@ -69,6 +71,15 @@ sub get_val {
 	    }
 	    if ($a ne $arch) {
 		die "architecture '$a' in file '$file' does not match that in previous files ('$arch'). Stopped";
+	    }
+	}
+	if ($line =~ /dbt-bench: host: (.+)/) {
+	    my $h = $1;
+	    if (!defined($host)) {
+		$host = $h;
+	    }
+	    if ($h ne $host) {
+		die "Host '$h' in file '$file' does not match that in previous files ('$host'). Stopped";
 	    }
 	}
     }
