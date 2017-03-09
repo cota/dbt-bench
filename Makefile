@@ -29,7 +29,7 @@ qemu-int.plt: qemu-plot.pl qemu.dat
 qemu-fp.plt: qemu-plot.pl qemu.dat
 	./$< --suite=fp qemu.dat > $@
 
-qemu.dat: qemu-dat.pl $(QEMU_FILES)
+qemu.dat: dat.pl $(QEMU_FILES)
 	./$< $(QEMU_FILES) > $@.tmp
 	mv $@.tmp $@
 
