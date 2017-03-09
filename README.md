@@ -36,3 +36,10 @@ generated with `make qemu`. (Other output formats are possible, see
 
 * Using the `-j` flag is safe. Tests are run sequentially; however, the
   parent `-j` parameter is used when QEMU is built.
+
+* Sometimes a build can fail, especially is the tree is not a pristine
+  copy. You can fix this manually in the tree; usually `make distclean` and/or
+  `git make -f` will do the trick. Note that the latter command can delete
+  valuable files that were never meant to be committed (e.g. scripts). For
+  this reason it is best to just clone a fresh QEMU repo to be used with
+  DBT-bench rather than using your development tree.
