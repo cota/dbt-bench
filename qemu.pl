@@ -22,6 +22,7 @@ my $arch = $ENV{'QEMU_ARCH'};
 my $outfile = $ARGV[0] or die "No output file given. Stopped";
 
 my $tag = $outfile;
+$tag =~ s|.*/([^/]+)$|$1|;
 $tag =~ s/\.nbench$//;
 
 my $origdir = getcwd;
