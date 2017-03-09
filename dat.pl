@@ -84,8 +84,8 @@ sub grab_results {
     my @errors;
 
     foreach (@$tests) {
-	push @vals,   $h->{$_}->{val} || die;
-	push @errors, $h->{$_}->{val} * $h->{$_}->{rel_err} || die;
+	push @vals,   $h->{$_}->{val};
+	push @errors, $h->{$_}->{val} * $h->{$_}->{rel_err};
     }
     my ($gmean, $err) = Mean::geometric_err(\@vals, \@errors);
     $res->{$ver}->{$type}->{gmean} = $gmean;
