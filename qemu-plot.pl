@@ -12,7 +12,7 @@ GetOptions(
 
 my %cols = (
     'int' => 2,
-    'fp' => 3,
+    'fp' => 4,
     );
 
 my %titles = (
@@ -54,4 +54,10 @@ print "set xtics (", join(", ", @arr), ")\n";
 print "set xtics rotate\n";
 print "set ylabel 'Score'\n";
 print "set xlabel 'QEMU version'\n";
-print "plot '$file' using 1:$cols{$suite} title '' with linespoints lw 1.5 pi -1 ps 1.2\n";
+my $col = $cols{$suite};
+my $col2 = $col + 1;
+my $ls = 'lw 1.5 pi -1 ps 1.2';
+my @pr;
+push @pr, "'$file' using 1:$col:$col2 notitle with errorbars $ls";
+push @pr, "'$file' using 1:$col notitle with linespoints $ls";
+print "plot ", join(", \\\n", @pr), "\n";

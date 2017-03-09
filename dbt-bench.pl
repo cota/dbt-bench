@@ -45,7 +45,7 @@ sub run_nbench {
 
     chdir("$Bin/$nbench") or die "cannot chdir($Bin/$nbench): $!";
 
-    my $cmd = "taskset -c 0 $tool ./nbench";
+    my $cmd = "taskset -c 0 $tool ./nbench -V";
     sys($cmd);
     chdir($origdir) or die "cannot chdir($origdir): $!";
 }
