@@ -23,10 +23,10 @@ qemu-%.svg: qemu-%.plt
 	gnuplot -e "set terminal svg size 800,600 enhanced fsize 14 butt" $< > $@.tmp
 	mv $@.tmp $@
 
-qemu-int.plt: qemu-plot.pl qemu.dat
+qemu-int.plt: plot.pl qemu.dat
 	./$< --xlabel='QEMU version' --suite=int qemu.dat > $@
 
-qemu-fp.plt: qemu-plot.pl qemu.dat
+qemu-fp.plt: plot.pl qemu.dat
 	./$< --xlabel='QEMU version' --suite=fp qemu.dat > $@
 
 qemu.dat: dat.pl $(QEMU_FILES)
