@@ -48,9 +48,8 @@ for (my $i = 0; $i < @vers; $i++) {
     $arr[$i] = "'$ver' $i";
 }
 
-$arch =~ s/_/\\_/g;
 print "set border linewidth 2.0\n";
-print "set title '$arch NBench ", $titles{$suite}, " Performance'\n";
+print "set title '$arch NBench ", $titles{$suite}, " Performance' noenhanced\n";
 print "set xrange [-1:", scalar(@vers), "]\n";
 print "set xtics (", join(", ", @arr), ")\n";
 print "set xtics rotate\n";
