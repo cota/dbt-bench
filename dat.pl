@@ -15,15 +15,22 @@ my @fp_tests = ('FOURIER',
 		'NEURAL NET',
 		'LU DECOMPOSITION');
 
-my @vers = map { (my $s = $_) =~ s/\.nbench$//; $s } @ARGV;
+my @files = @ARGV;
+my @vers;
+foreach (@files) {
+    my $s = $_;
+    $s =~ s|.*/([^/]+)$|$1|;
+    $s =~ s/\.nbench$//;
+    push @vers, $s;
+}
 die if (!@vers);
 
 my $res;
 my $arch;
 my $host;
 
-foreach my $ver (@vers) {
-    get_val($ver);
+for (my $i = 0; $i < @vers; $i++) {
+    get_val($vers[$i], $files[$i]);
 }
 
 print "# versions: ", join("\t", @vers), "\n";
@@ -38,8 +45,7 @@ for (my $i = 0; $i < @vers; $i++) {
 }
 
 sub get_val {
-    my ($ver) = @_;
-    my $file = "$ver.nbench";
+    my ($ver, $file) = @_;
     my $r;
     my $s;
     my $h;
