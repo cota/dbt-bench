@@ -33,3 +33,6 @@ generated with `make qemu`. (Other output formats are possible, see
 * The scripts do not reconfigure QEMU. They do call `make clean`, however.
   Make sure the tree pointed at by `QEMU_PATH` is properly configured for the
   architecture you want. Configuring with `--disable-werror` is recommended.
+
+* Using the `-j` flag is safe. Tests are run sequentially; however, the
+  parent `-j` parameter is used when QEMU is built.
