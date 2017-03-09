@@ -35,6 +35,15 @@ my $cmd = "$origdir/dbt-bench.pl $path/$arch-linux-user/qemu-$arch 1>$origdir/$o
 print "$cmd\n";
 sys($cmd);
 sys("echo \"dbt-bench: arch: $arch\" >> $origdir/$outfile.tmp");
+my $host = `cat /proc/cpuinfo | grep 'model name' | head -1`;
+chomp($host);
+if ($?) {
+    undef $host;
+}
+if ($host) {
+    $host =~ s/[^:]*:\s*(.*)\s*$/$1/;
+    sys("echo \"dbt-bench: host: $host\" >> $origdir/$outfile.tmp");
+}
 sys("git checkout $origtag");
 chdir($origdir) or die "cannot chdir($origdir): $!";
 sys("mv $outfile.tmp $outfile");
