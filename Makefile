@@ -24,10 +24,10 @@ qemu-%.svg: qemu-%.plt
 	mv $@.tmp $@
 
 qemu-int.plt: qemu-plot.pl qemu.dat
-	./$< --suite=int qemu.dat > $@
+	./$< --xlabel='QEMU version' --suite=int qemu.dat > $@
 
 qemu-fp.plt: qemu-plot.pl qemu.dat
-	./$< --suite=fp qemu.dat > $@
+	./$< --xlabel='QEMU version' --suite=fp qemu.dat > $@
 
 qemu.dat: dat.pl $(QEMU_FILES)
 	./$< $(QEMU_FILES) > $@.tmp

@@ -5,8 +5,10 @@ use strict;
 use Getopt::Long;
 
 my $suite = 'int';
+my $xlabel = 'Version';
 
 GetOptions(
+    'xlabel=s' => \$xlabel,
     'suite=s' => \$suite,
     );
 
@@ -53,7 +55,7 @@ print "set xrange [-1:", scalar(@vers), "]\n";
 print "set xtics (", join(", ", @arr), ")\n";
 print "set xtics rotate\n";
 print "set ylabel 'Score'\n";
-print "set xlabel 'QEMU version'\n";
+print "set xlabel '$xlabel'\n";
 my $col = $cols{$suite};
 my $col2 = $col + 1;
 my $ls = 'lw 1.5 pi -1 ps 1.2';
