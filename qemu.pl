@@ -32,7 +32,10 @@ die "cannot invoke git at $path: $?" if ($?);
 
 sys("make clean");
 sys("git checkout $tag");
-sys("make");
+# The first make can fail if we had to re-run ./configure
+if (system("make")) {
+    sys("make");
+}
 my $cmd = "$origdir/dbt-bench.pl $path/$arch-linux-user/qemu-$arch 1>$origdir/$outfile.tmp";
 print "$cmd\n";
 sys($cmd);
