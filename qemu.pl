@@ -30,8 +30,9 @@ chdir($path) or die "cannot chdir($path): $!";
 my $origtag = `git rev-parse HEAD`;
 die "cannot invoke git at $path: $?" if ($?);
 
+sys("make clean");
 sys("git checkout $tag");
-sys("make clean && make");
+sys("make");
 my $cmd = "$origdir/dbt-bench.pl $path/$arch-linux-user/qemu-$arch 1>$origdir/$outfile.tmp";
 print "$cmd\n";
 sys($cmd);
