@@ -1,10 +1,11 @@
 # DBT-bench
 
 DBT-bench is a simple benchmarking tool. For now, it runs the
-[NBench](https://en.wikipedia.org/wiki/NBench) benchmark suite under a
-user-provided executable. This executable can be any program that takes another
-executable as an argument, e.g., `/usr/bin/time` or a binary translator such
-as `qemu-user`.
+[NBench](https://en.wikipedia.org/wiki/NBench) benchmark suite and a subset
+of the tests in the [Perl language](https://www.perl.org/) distribution
+under a user-provided executable. This executable can be any program that
+takes another executable as an argument, e.g., `/usr/bin/time` or a binary
+translator such as `qemu-user`.
 
 ## NBench
 
