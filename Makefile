@@ -77,7 +77,7 @@ perl-deps:
 clean:
 	$(RM) *.tmp
 	$(RM) *.dat *.plt
-	$(RM) *.png *.txt
+	$(RM) *.png *.txt *.svg
 
 distclean: clean
 	$(RM) $(OUTDIR)/*.nbench
