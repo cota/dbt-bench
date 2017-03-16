@@ -1,3 +1,6 @@
+perf.data
+perf.data.old
+
 *.nbench
 *.tmp
 *.dat
