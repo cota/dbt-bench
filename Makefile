@@ -12,15 +12,15 @@ qemu: qemu-int.png qemu-fp.png
 
 .PHONY: qemu
 
-qemu-%.png: qemu-%.plt
+%.png: %.plt
 	gnuplot -e "set term pngcairo" $< > $@.tmp
 	mv $@.tmp $@
 
-qemu-%.txt: qemu-%.plt
+%.txt: %.plt
 	gnuplot -e "set term dumb" $< > $@.tmp
 	mv $@.tmp $@
 
-qemu-%.svg: qemu-%.plt
+%.svg: %.plt
 	gnuplot -e "set terminal svg size 800,600 enhanced fsize 14 butt" $< > $@.tmp
 	mv $@.tmp $@
 
