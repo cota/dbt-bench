@@ -22,7 +22,7 @@ variables, so that the scripts can check out the appropriate tags in the
 QEMU git repository and invoke the right `linux-user` binary.
 
 PNG plots with the integer and floating point NBench results can be
-generated with `make qemu`. (Other output formats are possible, see
+generated with `make nbench`. (Other output formats are possible, see
 `Makefile`.)
 
 ### Notes

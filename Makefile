@@ -4,13 +4,13 @@ QEMU_VERSIONS := 1.7
 QEMU_VERSIONS += 2.0 2.1 2.2 2.3 2.4 2.5 2.6 2.7 2.8
 OUTDIR := out
 QEMU_TAGS := $(addprefix v,$(addsuffix .0,$(QEMU_VERSIONS)))
-QEMU_FILES := $(addprefix $(OUTDIR)/,$(addsuffix .nbench,$(QEMU_TAGS)))
+NBENCH_FILES := $(addprefix $(OUTDIR)/,$(addsuffix .nbench,$(QEMU_TAGS)))
+QEMU_FILES := $(NBENCH_FILES)
 
-all: qemu
+all: nbench
 
-qemu: qemu-int.png qemu-fp.png
-
-.PHONY: qemu
+nbench: nbench-int.png nbench-fp.png
+.PHONY: nbench
 
 %.png: %.plt
 	gnuplot -e "set term pngcairo" $< > $@.tmp
@@ -24,14 +24,16 @@ qemu: qemu-int.png qemu-fp.png
 	gnuplot -e "set terminal svg size 800,600 enhanced fsize 14 butt" $< > $@.tmp
 	mv $@.tmp $@
 
-qemu-int.plt: plot.pl qemu.dat
-	./$< --xlabel='QEMU version' --suite=int qemu.dat > $@
+nbench-int.plt: plot.pl nbench.dat
+	./$< --xlabel='QEMU version' --suite=int nbench.dat > $@.tmp
+	mv $@.tmp $@
 
-qemu-fp.plt: plot.pl qemu.dat
-	./$< --xlabel='QEMU version' --suite=fp qemu.dat > $@
+nbench-fp.plt: plot.pl nbench.dat
+	./$< --xlabel='QEMU version' --suite=fp nbench.dat > $@.tmp
+	mv $@.tmp $@
 
-qemu.dat: dat.pl $(QEMU_FILES)
-	./$< $(QEMU_FILES) > $@.tmp
+nbench.dat: dat.pl $(NBENCH_FILES)
+	./$< $(NBENCH_FILES) > $@.tmp
 	mv $@.tmp $@
 
 # This makes sure we generate one file at a time, regardless
