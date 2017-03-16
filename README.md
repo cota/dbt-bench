@@ -27,9 +27,21 @@ you will need to have defined `QEMU_PATH` and `QEMU_ARCH` as environment
 variables, so that the scripts can check out the appropriate tags in the
 QEMU git repository and invoke the right `linux-user` binary.
 
-PNG plots with the integer and floating point NBench results can be
-generated with `make nbench`. (Other output formats are possible, see
-`Makefile`.)
+* PNG plots with the integer and floating point NBench results can be
+generated with:
+```
+$ make nbench
+```
+
+* PNG plots for Perl benchmarks (built with `make perl-deps` as described
+above) can be generated with:
+```
+$ make perl
+```
+The Perl suite differs from NBench in that it puts more emphasis on code
+translation.
+
+Other output formats are possible, see `Makefile`.
 
 ### Notes
 
