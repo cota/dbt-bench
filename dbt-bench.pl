@@ -76,8 +76,8 @@ sub run_perl {
     my $plpath = 'perldir';
     my $origdir = getcwd;
 
-    if (! -X "$Bin/$plpath/miniperl-real") {
-	die "miniperl-real executable not found. Build perl with `make perl'. Stopped";
+    if (! -X "$Bin/$plpath/perl-real") {
+	die "$plpath/perl-real executable not found. Build perl with `make perl-deps'. Stopped";
     }
     chdir("$Bin/$plpath") or die "cannot chdir($Bin/$plpath): $!";
     wr_perl_real($plpath, 'miniperl');
