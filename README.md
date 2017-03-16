@@ -13,6 +13,12 @@ to cross-compile.
 
 Note that NBench's repo (under `nbench`) is a submodule.
 
+## Perl
+
+Build perl with `make perl-deps`. The makefile will download the Perl sources,
+build them and test them. Note that cross-compilation for Perl is not
+supported.
+
 ## QEMU-user performance
 
 Scripts are provided to invoke `dbt-bench.pl` for different QEMU tags (or

@@ -15,16 +15,19 @@ GetOptions(
 my %cols = (
     'int' => 2,
     'fp' => 4,
+    'perl' => 2,
     );
 
 my %titles = (
     'int' => 'NBench Integer Performance',
     'fp' => 'NBench Floating Point Performance',
+    'perl' => 'Perl Compilation Performance',
     );
 
 my %ylabel = (
     'int' => 'Score\n(Higher is better)',
     'fp'  => 'Score\n(Higher is better)',
+    'perl' => 'Execution Time (s)\n(Lower is better)',
     );
 
 die "Invalid test $suite. Stopped" if (!$cols{$suite});
