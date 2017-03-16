@@ -22,8 +22,15 @@ my $arch = $ENV{'QEMU_ARCH'};
 my $outfile = $ARGV[0] or die "No output file given. Stopped";
 
 my $tag = $outfile;
+my $testname;
 $tag =~ s|.*/([^/]+)$|$1|;
-$tag =~ s/\.nbench$//;
+if ($tag =~ /\.([^.]+)$/) {
+    $testname = $1;
+}
+if (!defined($testname)) {
+    die "Filename not recognized; missing file extension. Stopped";
+}
+$tag =~ s/\.$testname$//;
 
 my $origdir = getcwd;
 chdir($path) or die "cannot chdir($path): $!";
@@ -36,7 +43,7 @@ sys("git checkout $tag");
 if (system("make")) {
     sys("make");
 }
-my $cmd = "$origdir/dbt-bench.pl $path/$arch-linux-user/qemu-$arch 1>$origdir/$outfile.tmp";
+my $cmd = "$origdir/dbt-bench.pl --tests=$testname $path/$arch-linux-user/qemu-$arch 1>$origdir/$outfile.tmp";
 print "$cmd\n";
 sys($cmd);
 sys("echo \"dbt-bench: arch: $arch\" >> $origdir/$outfile.tmp");
