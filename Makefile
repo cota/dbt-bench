@@ -64,12 +64,14 @@ perl.dat: dat-perl.pl $(PERL_FILES)
 $(QEMU_FILES):
 	+./qemu.pl $@
 
+# Ignore `make test' failure: it's OK if some of the tests fail
 perl-deps:
 	wget -nc http://www.cpan.org/src/5.0/$(PERL_DIR).tar.gz
 	tar xzf $(PERL_DIR).tar.gz
 	cd $(PERL_DIR) && ./Configure -des
 	ln -sf $(PERL_DIR) $(PERL_LN)
-	$(MAKE) -C $(PERL_DIR) test
+	$(MAKE) -C $(PERL_DIR)
+	-$(MAKE) -C $(PERL_DIR) test
 	mv $(PERL_DIR)/miniperl $(PERL_DIR)/miniperl-real
 	mv $(PERL_DIR)/perl $(PERL_DIR)/perl-real
 .PHONY: perl-deps
