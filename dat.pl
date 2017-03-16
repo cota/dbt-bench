@@ -46,11 +46,7 @@ for (my $i = 0; $i < @vers; $i++) {
 
 sub get_val {
     my ($ver, $file) = @_;
-    my $r;
-    my $s;
     my $h;
-    my @avgs = ();
-    my @errors = ();
     my $lastname;
 
     open my $in, '<:encoding(UTF-8)', $file or die "Could not open '$file' for reading $!";
