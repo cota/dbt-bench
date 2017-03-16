@@ -18,8 +18,13 @@ my %cols = (
     );
 
 my %titles = (
-    'int' => 'Integer',
-    'fp' => 'Floating Point',
+    'int' => 'NBench Integer Performance',
+    'fp' => 'NBench Floating Point Performance',
+    );
+
+my %ylabel = (
+    'int' => 'Score\n(Higher is better)',
+    'fp'  => 'Score\n(Higher is better)',
     );
 
 die "Invalid test $suite. Stopped" if (!$cols{$suite});
@@ -53,7 +58,8 @@ for (my $i = 0; $i < @vers; $i++) {
 }
 
 print "set border linewidth 2.0\n";
-print "set title \"$arch NBench ", $titles{$suite}, " Performance";
+
+print "set title \"$arch ", $titles{$suite};
 if ($host) {
     print "\\nHost: $host";
 }
@@ -61,7 +67,7 @@ print "\" noenhanced\n";
 print "set xrange [-1:", scalar(@vers), "]\n";
 print "set xtics (", join(", ", @arr), ")\n";
 print "set xtics rotate\n";
-print "set ylabel 'Score'\n";
+print "set ylabel \"", $ylabel{$suite}, "\"\n";
 print "set xlabel '$xlabel'\n";
 my $col = $cols{$suite};
 my $col2 = $col + 1;
