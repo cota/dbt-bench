@@ -7,13 +7,18 @@ use Getopt::Long;
 use FindBin qw($Bin);
 use lib "$FindBin::Bin/../lib";
 
-my $tool = $ARGV[0];
 my $help;
+my %tests = (
+    'nbench' => \&run_nbench,
+);
+my $tests = "nbench";
 
 GetOptions(
     'h|help' => sub { pr_usage(); },
+    'tests=s' => \$tests,
     );
 
+my $tool = $ARGV[0];
 if (!$tool) {
     pr_usage();
 }
@@ -22,7 +27,17 @@ if (! -X $tool) {
     die "Cannot find tool at $tool. Stopped";
 }
 
-run_nbench();
+my @tests = split(',', $tests);
+if (!@tests) {
+    die "No tests given. Stopped";
+}
+
+foreach (@tests) {
+    if (!$tests{$_}) {
+	die "Unrecognized test '$_'. Stopped";
+    }
+    $tests{$_}->();
+}
 
 sub pr_usage {
     my $usage = "Usage: $0 tool\n";
