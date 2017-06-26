@@ -26,12 +26,14 @@ for (my $i = 0; $i < @files; $i++) {
 }
 
 my @titles = (@all_tests, 'gmean');
-print join("\t", '# file\Bmark', map { $_, 'err' } @titles), "\n";
-for (my $i = 0; $i < @files; $i++) {
-    my $r = $res->{$files[$i]};
-    print join("\t", $files[$i],
-	       map { $r->{$_}->{val}, $r->{$_}->{err} } @titles
-	), "\n";
+print join("\t", '# Benchmark', map { $_, 'err' } @files), "\n";
+foreach my $t (@titles) {
+    my @arr = ();
+    for (my $i = 0; $i < @files; $i++) {
+	my $r = $res->{$files[$i]}->{$t};
+	push @arr, $r->{val}, $r->{err};
+    }
+    print join("\t", "\"$t\"", @arr), "\n";
 }
 
 sub get_val {
