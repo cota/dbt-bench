@@ -4,6 +4,7 @@
 use warnings;
 use strict;
 use Mean;
+use Getopt::Long;
 
 my @int_tests = ('NUMERIC SORT',
 		 'STRING SORT',
@@ -17,6 +18,11 @@ my @fp_tests = ('FOURIER',
 		'LU DECOMPOSITION');
 my @all_tests = (@int_tests, @fp_tests);
 
+# output in barchart format, see https://github.com/cota/barchart
+my $barchart;
+GetOptions(
+    'barchart' => \$barchart,
+    );
 my @files = @ARGV;
 
 my $res;
@@ -26,14 +32,34 @@ for (my $i = 0; $i < @files; $i++) {
 }
 
 my @titles = (@all_tests, 'gmean');
-print join("\t", '# Benchmark', map { $_, 'err' } @files), "\n";
-foreach my $t (@titles) {
-    my @arr = ();
-    for (my $i = 0; $i < @files; $i++) {
-	my $r = $res->{$files[$i]}->{$t};
-	push @arr, $r->{val}, $r->{err};
+if ($barchart) {
+    print "=cluster;", join(';', @files), "\n";
+    pr_table(\@titles, 'val', '=table');
+    pr_table(\@titles, 'err', '=yerrorbars');
+} else {
+    print join("\t", '# Benchmark', map { $_, 'err' } @files), "\n";
+
+    foreach my $t (@titles) {
+	my @arr = ();
+	for (my $i = 0; $i < @files; $i++) {
+	    my $r = $res->{$files[$i]}->{$t};
+	    push @arr, $r->{val}, $r->{err};
+	}
+	print join("\t", "\"$t\"", @arr), "\n";
     }
-    print join("\t", "\"$t\"", @arr), "\n";
+}
+
+sub pr_table {
+    my ($titles, $field, $pr) = @_;
+    print "$pr\n";
+    foreach my $t (@$titles) {
+	my @arr = ();
+	for (my $i = 0; $i < @files; $i++) {
+	    my $r = $res->{$files[$i]}->{$t};
+	    push @arr, $r->{$field};
+	}
+	print join("\t", "\"$t\"", @arr), "\n";
+    }
 }
 
 sub get_val {
