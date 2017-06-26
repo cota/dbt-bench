@@ -31,13 +31,24 @@ for (my $i = 0; $i < @files; $i++) {
     get_val($files[$i]);
 }
 
+# filenames without extension
+my @clean = ();
+foreach my $f (@files) {
+    my @parts = split('\.', $f);
+
+    if (@parts > 1) {
+	pop @parts;
+    }
+    push @clean, join('.', @parts);
+}
+
 my @titles = (@all_tests, 'gmean');
 if ($barchart) {
-    print "=cluster;", join(';', @files), "\n";
+    print "=cluster;", join(';', @clean), "\n";
     pr_table(\@titles, 'val', '=table');
     pr_table(\@titles, 'err', '=yerrorbars');
 } else {
-    print join("\t", '# Benchmark', map { $_, 'err' } @files), "\n";
+    print join("\t", '# Benchmark', map { $_, 'err' } @clean), "\n";
 
     foreach my $t (@titles) {
 	my @arr = ();
