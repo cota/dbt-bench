@@ -20,10 +20,23 @@ my @all_tests = (@int_tests, @fp_tests);
 
 # output in barchart format, see https://github.com/cota/barchart
 my $barchart;
+my $suite = 'all';
 GetOptions(
     'barchart' => \$barchart,
+    'suite=s' => \$suite,
     );
 my @files = @ARGV;
+
+my %suites = (
+    'all' => \@all_tests,
+    'int' => \@int_tests,
+    'fp' => \@fp_tests,
+    );
+
+if (!defined($suites{$suite})) {
+    die "Invalid suite '$suite'. Options: ", join(', ', sort keys %suites), ".\n";
+}
+my @tests = @{ $suites{$suite} };
 
 my $res;
 
@@ -42,7 +55,7 @@ foreach my $f (@files) {
     push @clean, join('.', @parts);
 }
 
-my @titles = (@all_tests, 'gmean');
+my @titles = (@tests, 'gmean');
 if ($barchart) {
     print "=cluster;", join(';', @clean), "\n";
     pr_table(\@titles, 'val', '=table');
@@ -98,7 +111,7 @@ sub get_val {
 	}
     }
     close $in or die "Could not close '$file': $!";
-    compute_geomean($h, \@all_tests);
+    compute_geomean($h, \@tests);
     $res->{$file} = $h;
 }
 
