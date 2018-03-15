@@ -23,9 +23,11 @@ my @all_tests = (@int_tests, @fp_tests);
 # output in barchart format, see https://github.com/cota/barchart
 my $barchart;
 my $suite = 'all';
+my $titles;
 GetOptions(
     'barchart' => \$barchart,
     'suite=s' => \$suite,
+    'titles=s' => \$titles,
     );
 my @files = @ARGV;
 
@@ -46,24 +48,31 @@ for (my $i = 0; $i < @files; $i++) {
     get_val($files[$i]);
 }
 
-# filenames without extension
-my @clean = ();
-foreach my $f (@files) {
-    my @parts = split('\.', $f);
+my @titles = ();
 
-    if (@parts > 1) {
-	pop @parts;
+if (defined($titles)) {
+    @titles = split(',', $titles);
+
+    die if (scalar(@titles) != scalar(@files));
+} else {
+    # filenames without extension
+    foreach my $f (@files) {
+	my @parts = split('\.', $f);
+
+	if (@parts > 1) {
+	    pop @parts;
+	}
+	push @titles, join('.', @parts);
     }
-    push @clean, join('.', @parts);
 }
 
 my @bars = (@tests, 'gmean');
 if ($barchart) {
-    print "=cluster;", join(';', @clean), "\n";
+    print "=cluster;", join(';', @titles), "\n";
     pr_table(\@bars, 'val', '=table');
     pr_table(\@bars, 'err', '=yerrorbars');
 } else {
-    print join("\t", '# Benchmark', map { $_, 'err' } @clean), "\n";
+    print join("\t", '# Benchmark', map { $_, 'err' } @titles), "\n";
 
     foreach my $t (@bars) {
 	my @arr = ();
