@@ -57,15 +57,15 @@ foreach my $f (@files) {
     push @clean, join('.', @parts);
 }
 
-my @titles = (@tests, 'gmean');
+my @bars = (@tests, 'gmean');
 if ($barchart) {
     print "=cluster;", join(';', @clean), "\n";
-    pr_table(\@titles, 'val', '=table');
-    pr_table(\@titles, 'err', '=yerrorbars');
+    pr_table(\@bars, 'val', '=table');
+    pr_table(\@bars, 'err', '=yerrorbars');
 } else {
     print join("\t", '# Benchmark', map { $_, 'err' } @clean), "\n";
 
-    foreach my $t (@titles) {
+    foreach my $t (@bars) {
 	my @arr = ();
 	for (my $i = 0; $i < @files; $i++) {
 	    my $r = $res->{$files[$i]}->{$t};
@@ -76,9 +76,9 @@ if ($barchart) {
 }
 
 sub pr_table {
-    my ($titles, $field, $pr) = @_;
+    my ($bars, $field, $pr) = @_;
     print "$pr\n";
-    foreach my $t (@$titles) {
+    foreach my $t (@$bars) {
 	my @arr = ();
 	for (my $i = 0; $i < @files; $i++) {
 	    my $r = $res->{$files[$i]}->{$t};
