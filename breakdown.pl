@@ -22,11 +22,13 @@ my @all_tests = (@int_tests, @fp_tests);
 
 # output in barchart format, see https://github.com/cota/barchart
 my $barchart;
+my @extra_barchart_args;
 my @extra_gnuplot_args;
 my $suite = 'all';
 my $titles;
 GetOptions(
     'barchart' => \$barchart,
+    'extra-barchart=s' => \@extra_barchart_args, # --barchart only
     'extra-gnuplot=s' => \@extra_gnuplot_args, # --barchart only
     'suite=s' => \$suite,
     'titles=s' => \$titles,
@@ -71,6 +73,9 @@ if (defined($titles)) {
 my @bars = (@tests, 'gmean');
 if ($barchart) {
     print "=cluster;", join(';', @titles), "\n";
+    if (@extra_barchart_args) {
+	print join("\n", map { "$_" } @extra_barchart_args), "\n";
+    }
     if (@extra_gnuplot_args) {
 	print join("\n", map { "extraops=$_" } @extra_gnuplot_args), "\n";
     }
