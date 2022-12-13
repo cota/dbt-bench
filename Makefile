@@ -8,7 +8,7 @@ NBENCH_FILES := $(addprefix $(OUTDIR)/,$(addsuffix .nbench,$(QEMU_TAGS)))
 PERL_FILES   := $(addprefix $(OUTDIR)/,$(addsuffix .perl,$(QEMU_TAGS)))
 QEMU_FILES := $(NBENCH_FILES) $(PERL_FILES)
 
-PERL_VERSION := 5.24.1
+PERL_VERSION := 5.36.0
 PERL_DIR := perl-$(PERL_VERSION)
 PERL_LN := perldir
 

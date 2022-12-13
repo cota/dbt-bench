@@ -84,7 +84,8 @@ sub run_perl {
     wr_perl_real($plpath, 'perl');
     my @durations;
     # We only run Perl's compilation tests, so that code translation is emphasized
-    my $cmd = "taskset -c 0 $tool $Bin/$plpath/perl-real -I$Bin/$plpath/t/lib -I$Bin/$plpath/t $Bin/$plpath/t/TEST $Bin/$plpath/t/comp/*.t </dev/tty";
+    chdir("$Bin/$plpath/t") or die "cannot chdir($Bin/$plpath/t): $!";
+    my $cmd = "taskset -c 0 $tool $Bin/$plpath/perl-real harness $Bin/$plpath/t/comp/*.t";
     for (my $i = 0; $i < $tries; $i++) {
 	my $t0 = [gettimeofday];
 	sys($cmd);
