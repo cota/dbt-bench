@@ -1,9 +1,6 @@
 # old versions do not compile reliably on modern GCC
-# QEMU_VERSIONS := 1 1.1 1.2 1.3 1.4 1.5 1.6 1.7
-QEMU_VERSIONS := 1.7
-QEMU_VERSIONS += 2.0 2.1 2.2 2.3 2.4 2.5 2.6 2.7 2.8
+QEMU_TAGS := v7.0.0 v7.1.0 master
 OUTDIR := out
-QEMU_TAGS := $(addprefix v,$(addsuffix .0,$(QEMU_VERSIONS)))
 NBENCH_FILES := $(addprefix $(OUTDIR)/,$(addsuffix .nbench,$(QEMU_TAGS)))
 PERL_FILES   := $(addprefix $(OUTDIR)/,$(addsuffix .perl,$(QEMU_TAGS)))
 QEMU_FILES := $(NBENCH_FILES) $(PERL_FILES)
