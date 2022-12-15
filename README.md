@@ -23,18 +23,18 @@ supported.
 ## QEMU-user performance
 
 Scripts are provided to invoke `dbt-bench.pl` for different QEMU tags (or
-commit id's). See the `QEMU_VERSIONS` variable in the Makefile. Note that
-you will need to have defined `QEMU_PATH` and `QEMU_ARCH` as environment
-variables, so that the scripts can check out the appropriate tags in the
+commit id's). See the `QEMU_TAGS` variable in the Makefile. Note that
+you will also need to have defined `QEMU_PATH` and `QEMU_ARCH` when running
+make, so that the scripts can check out the appropriate tags in the
 QEMU git repository and invoke the right `linux-user` binary.
 
-* PNG plots with the integer and floating point NBench results can be
+* PNG/txt plots with the integer and floating point NBench results can be
 generated with:
 ```
 $ make nbench
 ```
 
-* PNG plots for Perl benchmarks (built with `make perl-deps` as described
+* PNG/txt plots for Perl benchmarks (built with `make perl-deps` as described
 above) can be generated with:
 ```
 $ make perl
@@ -49,12 +49,39 @@ Other output formats are possible, see `Makefile`.
 * If your `QEMU_ARCH` is not that of the host machine, make sure to have
   cross-compiled NBench as described above.
 
-* The scripts do not reconfigure QEMU. They do call `make clean`, however.
-  Make sure the tree pointed at by `QEMU_PATH` is properly configured for the
-  architecture you want. Configuring with `--disable-werror` is recommended.
+* QEMU is rebuilt for every tag in `QEMU_TAG`, unless a build for that
+  architecture already exists in the `out/` directory.
 
-* Using the `-j` flag is safe. Tests are run sequentially; however, the
-  parent `-j` parameter is used when QEMU is built.
+* Multi-arch builds are possible by setting `QEMU_ARCH`, e.g.
+  `QEMU_ARCH="x86_64 aarch64"`.
+
+* Using different compiler options is possible by setting `QEMU_CONF`. The
+  parameters set there are passed verbatim to QEMU's `configure` script.
+  Note that `--target-list` is already populated from `QEMU_ARCH`.
+
+* In order to distinguish builds of the same tag with different `configure`
+  options, you can set `TAG_SUFFIX`.
+  Using `TAG_SUFFIX` allows us, for instance, to assign a specific
+  "tag" (i.e. a git tag + suffix) to a combination of git tag and
+  `--configure` settings. Without the suffix we'd just have the git tag,
+  which doesn't allow us to disambiguate config settings. For example,
+  to benchmark two tags with two different settings, we can do:
+```
+$ make -j QEMU_TAGS="foo bar" TAG_SUFFIX="settings0" QEMU_CONF="--conf-settings0" [...]
+$ make clean # Deletes just the plot files, not the data files
+$ make -j QEMU_TAGS="foo bar" TAG_SUFFIX="settings1" QEMU_CONF="--conf-settings1" [...]
+$ make clean # Again, deletes just the plot files, not the data files
+$ make -j QEMU_TAGS="foo-settings0 foo-settings1 bar-settings0 bar-settings1" [...]
+$ cat nbench-fp.txt
+```
+
+* Building with `QEMU_CONF="--disable-werror"` is recommended, particularly
+  when building QEMU versions that are older than the compiler being used
+  to build them.
+
+* Using the `-j` flag is safe. Tests are run sequentially; QEMU builds are
+  run one at a time, and each of them is currently hardcoded to run with
+  `make -j 4`.
 
 * Sometimes a build can fail, especially is the tree is not a pristine
   copy. You can fix this manually in the tree; usually `make distclean` and/or

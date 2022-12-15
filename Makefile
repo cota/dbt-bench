@@ -1,22 +1,51 @@
-# old versions do not compile reliably on modern GCC
-QEMU_TAGS := v7.0.0 v7.1.0 master
-OUTDIR := out
-NBENCH_FILES := $(addprefix $(OUTDIR)/,$(addsuffix .nbench,$(QEMU_TAGS)))
-PERL_FILES   := $(addprefix $(OUTDIR)/,$(addsuffix .perl,$(QEMU_TAGS)))
-QEMU_FILES := $(NBENCH_FILES) $(PERL_FILES)
+# Mandatory
+QEMU_PATH := $HOME/src/qemu
+QEMU_ARCH := x86_64
+QEMU_TAGS := master
+
+# Optional
+QEMU_CONF :=
+TAG_SUFFIX :=
+
+# Check that the mandatory variables are set
+ifeq ($(QEMU_PATH),)
+  $(error Missing QEMU_PATH)
+endif
+ifeq ($(QEMU_ARCH),)
+  $(error Missing QEMU_ARCH)
+endif
+ifeq ($(QEMU_TAGS),)
+  $(error Missing QEMU_TAGS)
+endif
+
+# Probably no need to change any of the remaining variables.
+QEMU_FINAL_TAGS := $(addsuffix $(TAG_SUFFIX),$(QEMU_TAGS))
+MKFILE_PATH = $(abspath $(lastword $(MAKEFILE_LIST)))
+OUTDIR := $(dir $(MKFILE_PATH))out
+ROOT_FILES := $(foreach arch,$(QEMU_ARCH),$(addsuffix -$(arch),$(QEMU_FINAL_TAGS)))
+OUT_ROOT_FILES := $(addprefix $(OUTDIR)/,$(ROOT_FILES))
+NBENCH_FILES := $(addsuffix .nbench,$(OUT_ROOT_FILES))
+PERL_FILES   := $(addsuffix .perl,$(OUT_ROOT_FILES))
+OUT_FILES := $(NBENCH_FILES) $(PERL_FILES)
+
+QEMU_BINARIES := $(addprefix $(OUTDIR)/,$(foreach arch,$(QEMU_ARCH),$(addsuffix /bin/qemu-$(arch),$(QEMU_FINAL_TAGS))))
 
 PERL_VERSION := 5.36.0
 PERL_DIR := perl-$(PERL_VERSION)
 PERL_LN := perldir
 
+EMPTY :=
+SPACE := $(EMPTY) $(EMPTY)
+COMMA := ,
+
 # Do not run Perl tests by default because building Perl takes a while.
 # Moreover, Perl doesn't support cross-compilation.
 all: nbench
 
-nbench: nbench-int.png nbench-fp.png
+nbench: $(foreach ext,png txt,nbench-int.$(ext) nbench-fp.$(ext))
 .PHONY: nbench
 
-perl: perl.png
+perl: $(foreach ext,png txt,perl.$(ext))
 .PHONY: perl
 
 %.png: %.plt
@@ -52,14 +81,29 @@ perl.dat: dat-perl.pl $(PERL_FILES)
 	mv $@.tmp $@
 
 # This makes sure we generate one file at a time, regardless
-# of the -j parameter. However, we want to leverage multiple
-# cores to build each of the QEMU versions we're testing.
-# To make sure subsequent make invocations pick this up,
-# the recipe that calls the Perl script begins with '+'.
-.NOTPARALLEL: $(QEMU_FILES)
+# of the -j parameter.
+.NOTPARALLEL: $(OUT_FILES) $(QEMU_BINARIES)
 
-$(QEMU_FILES):
-	+./qemu.pl $@
+BIN_PICK_TAG =  $(shell echo $@ | perl -pe 's|^$(OUTDIR)/([^/]+)$(TAG_SUFFIX).*|$$1|')
+BIN_PICK_PFX =  $(shell echo $@ | perl -pe 's|(.*)/bin/qemu-.*|$$1|')
+MAKE_TARGET_LIST = $(subst $(SPACE),$(COMMA),$(addsuffix -linux-user,$(QEMU_ARCH)))
+
+qemu_binaries: $(QEMU_BINARIES)
+.PHONY: qemu_binaries
+
+$(QEMU_BINARIES):
+	mkdir -p $(QEMU_PATH)/build
+	cd $(QEMU_PATH)/build && \
+	git checkout $(BIN_PICK_TAG) && \
+	../configure --target-list=$(MAKE_TARGET_LIST) \
+		--prefix=$(BIN_PICK_PFX) $(QEMU_CONF)
+	$(MAKE) -C $(QEMU_PATH)/build clean
+# This is a .NOTPARALLEL target, so we pass -j 4 hoping the host won't
+# run out of memory.
+	$(MAKE) -j 4 -C $(QEMU_PATH)/build install
+
+$(OUT_FILES): $(QEMU_BINARIES)
+	./qemu.pl $@
 
 # Ignore `make test' failure: it's OK if some of the tests fail
 perl-deps:

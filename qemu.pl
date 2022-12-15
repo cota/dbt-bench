@@ -1,52 +1,34 @@
 #!/usr/bin/perl
-# invoke qemu's linux-user for a certain tag.
-# env variables: QEMU_PATH, QEMU_ARCH
+# Given an output filename, run the appropriate QEMU binary under dbt-bench.pl.
 
 use warnings;
 use strict;
 use Cwd;
-
-if (!defined($ENV{'QEMU_PATH'})) {
-    die "Define QEMU_PATH environment variable. Stopped";
-}
-my $path = $ENV{'QEMU_PATH'};
-if (! -d $path) {
-    die "$path is not a directory. Stopped";
-}
-
-if (!defined($ENV{'QEMU_ARCH'})) {
-    die "Define QEMU_ARCH environment variable, e.g. x86_64. Stopped";
-}
-my $arch = $ENV{'QEMU_ARCH'};
+use File::Basename;
 
 my $outfile = $ARGV[0] or die "No output file given. Stopped";
-
-my $tag = $outfile;
-my $testname;
-$tag =~ s|.*/([^/]+)$|$1|;
-if ($tag =~ /\.([^.]+)$/) {
-    $testname = $1;
+my $tag_suffix = "";
+if (@ARGV > 1) {
+    $tag_suffix = $ARGV[1];
 }
-if (!defined($testname)) {
-    die "Filename not recognized; missing file extension. Stopped";
-}
-$tag =~ s/\.$testname$//;
 
-my $origdir = getcwd;
-chdir($path) or die "cannot chdir($path): $!";
-my $origtag = `git rev-parse HEAD`;
-die "cannot invoke git at $path: $?" if ($?);
+my $outdir = dirname($outfile);
+my $origdir = dirname($outdir);
+my $outbasename = basename($outfile);
 
-sys("make clean");
-sys("git checkout $tag");
-# The first make can fail if we had to re-run ./configure
-if (system("make")) {
-    sys("make");
+my $match = $outbasename =~ m/(.*)$tag_suffix-(.*)\.([^.]+)/;
+if (!$match) {
+    die "Cannot find out tag/arch/testname triple from '$outbasename'";
 }
-my $cmd = "$origdir/dbt-bench.pl --tests=$testname $path/$arch-linux-user/qemu-$arch 1>$origdir/$outfile.tmp";
+my $tag = $1;
+my $arch = $2;
+my $testname = $3;
+
+my $binary = "$outdir/$tag$tag_suffix/bin/qemu-$arch";
+my $cmd = "$origdir/dbt-bench.pl --tests=$testname $binary 1>$outfile.tmp";
 print "$cmd\n";
 sys($cmd);
-sys("echo \"dbt-bench: arch: $arch\" >> $origdir/$outfile.tmp");
+sys("echo \"dbt-bench: arch: $arch\" >> $outfile.tmp");
 my $host = `cat /proc/cpuinfo | grep 'model name' | head -1`;
 chomp($host);
 if ($?) {
@@ -54,9 +36,8 @@ if ($?) {
 }
 if ($host) {
     $host =~ s/[^:]*:\s*(.*)\s*$/$1/;
-    sys("echo \"dbt-bench: host: $host\" >> $origdir/$outfile.tmp");
+    sys("echo \"dbt-bench: host: $host\" >> $outfile.tmp");
 }
-sys("git checkout $origtag");
 chdir($origdir) or die "cannot chdir($origdir): $!";
 sys("mv $outfile.tmp $outfile");
 
