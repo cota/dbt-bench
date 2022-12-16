@@ -54,6 +54,9 @@ close $in or die "Could not close '$file': $!";
 die if (!@vers);
 die if (!defined($arch));
 
+# Remove $arch from @vers, since it's redundant and takes valuable real estate.
+@vers = map { (my $s = $_) =~ s/(.*)-$arch$/$1/; $s } @vers;
+
 my @arr;
 for (my $i = 0; $i < @vers; $i++) {
     my $ver = $vers[$i];
