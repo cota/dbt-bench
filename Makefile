@@ -22,6 +22,7 @@ endif
 QEMU_FINAL_TAGS := $(addsuffix $(TAG_SUFFIX),$(QEMU_TAGS))
 MKFILE_PATH = $(abspath $(lastword $(MAKEFILE_LIST)))
 OUTDIR := $(dir $(MKFILE_PATH))out
+NBENCH_DIR := $(dir $(MKFILE_PATH))nbench
 ROOT_FILES := $(foreach arch,$(QEMU_ARCH),$(addsuffix -$(arch),$(QEMU_FINAL_TAGS)))
 OUT_ROOT_FILES := $(addprefix $(OUTDIR)/,$(ROOT_FILES))
 NBENCH_FILES := $(addsuffix .nbench,$(OUT_ROOT_FILES))
@@ -29,6 +30,7 @@ PERL_FILES   := $(addsuffix .perl,$(OUT_ROOT_FILES))
 OUT_FILES := $(NBENCH_FILES) $(PERL_FILES)
 
 QEMU_BINARIES := $(addprefix $(OUTDIR)/,$(foreach arch,$(QEMU_ARCH),$(addsuffix /bin/qemu-$(arch),$(QEMU_FINAL_TAGS))))
+NBENCH_BINARIES := $(addprefix $(OUTDIR)/nbench.,$(QEMU_ARCH))
 
 PERL_VERSION := 5.36.0
 PERL_DIR := perl-$(PERL_VERSION)
@@ -82,7 +84,7 @@ perl.dat: dat-perl.pl $(PERL_FILES)
 
 # This makes sure we generate one file at a time, regardless
 # of the -j parameter.
-.NOTPARALLEL: $(OUT_FILES) $(QEMU_BINARIES)
+.NOTPARALLEL: $(OUT_FILES) $(QEMU_BINARIES) $(NBENCH_BINARIES)
 
 BIN_PICK_TAG =  $(shell echo $@ | perl -pe 's|^$(OUTDIR)/([^/]+)$(TAG_SUFFIX).*|$$1|')
 BIN_PICK_PFX =  $(shell echo $@ | perl -pe 's|(.*)/bin/qemu-.*|$$1|')
@@ -102,7 +104,17 @@ $(QEMU_BINARIES):
 # run out of memory.
 	$(MAKE) -j 4 -C $(QEMU_PATH)/build install
 
-$(OUT_FILES): $(QEMU_BINARIES)
+NBENCH_BIN_PICK_ARCH = $(shell echo $@ | perl -pe 's|^$(OUTDIR)/nbench\.(.*)|$$1|')
+
+$(NBENCH_BINARIES):
+	$(MAKE) -C $(NBENCH_DIR) clean
+	$(MAKE) -C $(NBENCH_DIR) CROSS_COMPILE=$(NBENCH_BIN_PICK_ARCH)-linux-gnu-
+	cp $(NBENCH_DIR)/nbench $@
+
+$(NBENCH_FILES): $(QEMU_BINARIES) $(NBENCH_BINARIES)
+	./qemu.pl $@
+
+$(PERL_FILES): $(QEMU_BINARIES)
 	./qemu.pl $@
 
 # Ignore `make test' failure: it's OK if some of the tests fail

@@ -34,6 +34,12 @@ if (! -X $tool) {
     die "Cannot find tool at $tool. Stopped";
 }
 
+my $arch = $tool;
+$arch =~ s|.*/qemu-([^/]+)$|$1|;
+if (!$arch) {
+    die "Cannot figure out arch from '$tool'";
+}
+
 my @tests = split(',', $tests);
 if (!@tests) {
     die "No tests given. Stopped";
@@ -59,15 +65,16 @@ sub sys {
 
 sub run_nbench {
     my $nbench = 'nbench';
+    my $outdir = "$Bin/out";
+    my $binary = "$outdir/nbench.$arch";
     my $origdir = getcwd;
 
-    if (! -X "$Bin/$nbench/nbench") {
-	die "nbench executable not found. Build $nbench with make -C $Bin/$nbench (Note: it is a git submodule). Stopped";
+    if (! -X $binary) {
+	die "nbench executable not found at '$binary'. Check dbt-bench/Makefile for the rule to build it.";
     }
 
-    chdir("$Bin/$nbench") or die "cannot chdir($Bin/$nbench): $!";
-
-    my $cmd = "taskset -c 0 $tool ./nbench -V";
+    chdir("$outdir") or die "cannot chdir($outdir): $!";
+    my $cmd = "taskset -c 0 $tool $binary -V";
     sys($cmd);
     chdir($origdir) or die "cannot chdir($origdir): $!";
 }

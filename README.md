@@ -9,16 +9,20 @@ translator such as `qemu-user`.
 
 ## NBench
 
-Build NBench with `make -C nbench`. Define the `CROSS_COMPILE` variable
-to cross-compile.
+The scripts attempt to build and run NBench automatically, provided there
+is a valid cross-compiler for the target architecture.
 
-Note that NBench's repo (under `nbench`) is a submodule.
+Build and benchmark NBench with `make nbench`.
+
+Note that NBench's repo (under `nbench`) is a submodule, so it has to be
+checked out first.
 
 ## Perl
 
-Build perl with `make perl-deps`. The makefile will download the Perl sources,
-build them and test them. Note that cross-compilation for Perl is not
-supported.
+Build and benchmark Perl with `make perl`.
+
+Note: cross-compilation for Perl is not supported, so this can only run
+with a QEMU_ARCH that matches that of the host machine.
 
 ## QEMU-user performance
 
